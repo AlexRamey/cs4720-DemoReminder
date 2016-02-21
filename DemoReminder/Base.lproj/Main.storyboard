@@ -123,11 +123,15 @@
                             </stackView>
                         </subviews>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                        <gestureRecognizers/>
                         <constraints>
                             <constraint firstAttribute="trailingMargin" secondItem="76a-c7-uTP" secondAttribute="trailing" id="Fpd-8U-rgn"/>
                             <constraint firstItem="76a-c7-uTP" firstAttribute="top" secondItem="66b-ha-82e" secondAttribute="bottom" constant="8" symbolic="YES" id="YWd-2b-y9R"/>
                             <constraint firstItem="76a-c7-uTP" firstAttribute="leading" secondItem="zEU-Pm-LEK" secondAttribute="leadingMargin" id="aMA-gw-gPR"/>
                         </constraints>
+                        <connections>
+                            <outletCollection property="gestureRecognizers" destination="Zku-6L-j01" appends="YES" id="jMT-Ek-0Of"/>
+                        </connections>
                     </view>
                     <navigationItem key="navigationItem" title="New Reminder" id="bNE-tb-2Ve">
                         <barButtonItem key="leftBarButtonItem" systemItem="cancel" id="Prg-s2-8qx">
@@ -150,6 +154,11 @@
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="beW-lT-EPd" userLabel="First Responder" sceneMemberID="firstResponder"/>
                 <exit id="7ud-ux-yhr" userLabel="Exit" sceneMemberID="exit"/>
+                <tapGestureRecognizer id="Zku-6L-j01">
+                    <connections>
+                        <action selector="tapRecieved:" destination="1No-kz-Pqv" id="rfg-Oy-f6f"/>
+                    </connections>
+                </tapGestureRecognizer>
             </objects>
             <point key="canvasLocation" x="37" y="381"/>
         </scene>

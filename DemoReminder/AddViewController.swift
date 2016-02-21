@@ -23,6 +23,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
     
     required init?(coder aDecoder: NSCoder) {
         super.init(coder: aDecoder)
+        // register to be notified when keyboard is about to show by calling our keyboardWillShow: method
         NSNotificationCenter.defaultCenter().addObserver(self, selector: "keyboardWillShow:", name: UIKeyboardWillShowNotification, object: nil)
     }
 
@@ -49,8 +50,10 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         // Dispose of any resources that can be recreated.
     }
     
+    // Respond to notification from notification center that keyboard is about to show
     func keyboardWillShow(notification:NSNotification) {
         print("notified")
+        // we only care if it's the description field b/c keyboard covers it up
         if (descriptionTextField.editing){
             let userInfo:NSDictionary = notification.userInfo!
             let keyboardFrame:NSValue = userInfo.valueForKey(UIKeyboardFrameEndUserInfoKey) as! NSValue
@@ -61,10 +64,19 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         
     }
     
+    // shift the view up or down depending on if keyboard is hidden
     func shiftViewForKeyboardHiddenState(isHidden:Bool){
         UIView .animateWithDuration(0.1, animations: { () -> Void in
             self.view.frame = CGRectMake(self.view.frame.origin.x, (isHidden ? 0 : -1) * self.keyboardHeight, self.view.frame.width, self.view.frame.height)
         });
+    }
+    
+    // MARK: UIGestureRecognizer IBAction
+    
+    // dismiss keyboard if user taps background
+    @IBAction func tapRecieved(sender: AnyObject){
+        print("tap received")
+        self.view.endEditing(true)
     }
     
     // MARK: UITextFieldDelegate
@@ -96,7 +108,6 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             self.shiftViewForKeyboardHiddenState(true)
         }
     }
-
     
     // MARK: - Navigation
     @IBOutlet weak var cancel: UIBarButtonItem!

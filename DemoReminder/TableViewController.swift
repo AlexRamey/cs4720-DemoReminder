@@ -12,6 +12,10 @@ class TableViewController: UITableViewController {
     
     let cellReuseIdentifier = "ReminderCell"
     var reminderList = [Reminder]()
+    // iOS9 colors
+    let redColor = UIColor(colorLiteralRed: 250.0/255.0, green: 59.0/255.0, blue: 49.0/255.0, alpha: 1.0)
+    let yellowColor = UIColor(colorLiteralRed: 253.0/255.0, green: 205.0/255.0, blue: 0.0, alpha: 1.0)
+    let greenColor = UIColor(colorLiteralRed: 76.0/255.0, green: 218.0/255.0, blue: 100.0/255.0, alpha: 1.0)
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -46,6 +50,20 @@ class TableViewController: UITableViewController {
         cell.titleView.text = reminder.title
         cell.dateView.text = reminder.getFormattedDateString()
 
+        let difference = reminder.date.timeIntervalSinceNow
+        if (difference < 3600*24)
+        {
+            cell.contentView.backgroundColor = self.redColor
+        }
+        else if (difference < 3600 * 24 * 3)
+        {
+            cell.contentView.backgroundColor = self.yellowColor
+        }
+        else
+        {
+            cell.contentView.backgroundColor = self.greenColor
+        }
+        
         return cell
     }
     

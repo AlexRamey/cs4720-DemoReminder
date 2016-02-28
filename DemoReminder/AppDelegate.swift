@@ -13,10 +13,44 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     var window: UIWindow?
 
-
     func application(application: UIApplication, didFinishLaunchingWithOptions launchOptions: [NSObject: AnyObject]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Register for notifications
+        let notificationSettings = UIUserNotificationSettings(forTypes: UIUserNotificationType.Alert, categories: nil)
+        UIApplication.sharedApplication().registerUserNotificationSettings(notificationSettings)
+        
         return true
+    }
+    
+    func application(application: UIApplication, didReceiveLocalNotification notification: UILocalNotification) {
+        let alertController = UIAlertController(title: notification.alertTitle, message: notification.alertBody, preferredStyle: .Alert)
+        
+        // Create notification actions
+        let dismissAction = UIAlertAction(title: "Dismiss", style: .Destructive) { (action) in
+            print(action)
+        }
+        let postponeAction = UIAlertAction(title: "Postpone", style: .Cancel) { (action) in
+            print(action)
+            //let rootViewController = self.window?.rootViewController as! UINavigationController
+            //let tableViewController = rootViewController.viewControllers[0] as! TableViewController
+            //tableViewController.postponeReminder(notification.valueForKey("uuid") as! String)
+        }
+        
+        // Add actions to AlertController
+        alertController.addAction(postponeAction)
+        alertController.addAction(dismissAction)
+        
+        // Get currently showing ViewController
+        var currentViewController = self.window?.rootViewController
+        
+        // Move up through view cotnrollers to get hte topmost one
+        while let next = currentViewController?.presentedViewController {
+            currentViewController = next
+        }
+        
+        // Show the alertController on the top ViewController
+        currentViewController?.presentViewController(alertController, animated: true, completion: nil)
     }
 
     func applicationWillResignActive(application: UIApplication) {

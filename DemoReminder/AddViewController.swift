@@ -134,6 +134,14 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             
             // Set the Reminder object to be passed to TableViewController after the unwind segue
             reminder = Reminder(title: title, desc: desc, date: date)
+            
+            // Schedule local notification
+            let reminderNotification = UILocalNotification()
+            reminderNotification.fireDate = date
+            reminderNotification.alertTitle = title
+            reminderNotification.alertBody = desc
+            print(reminder!.uuid)
+            UIApplication.sharedApplication().scheduleLocalNotification(reminderNotification)
         }
     }
     

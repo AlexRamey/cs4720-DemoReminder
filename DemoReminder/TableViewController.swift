@@ -12,6 +12,7 @@ class TableViewController: UITableViewController {
     
     let cellReuseIdentifier = "ReminderCell"
     var reminderList = [Reminder]()
+    
     // iOS9 colors
     let redColor = UIColor(colorLiteralRed: 250.0/255.0, green: 59.0/255.0, blue: 49.0/255.0, alpha: 1.0)
     let yellowColor = UIColor(colorLiteralRed: 253.0/255.0, green: 205.0/255.0, blue: 0.0, alpha: 1.0)
@@ -146,6 +147,14 @@ class TableViewController: UITableViewController {
             return (lhs.title.compare(rhs.title) == NSComparisonResult.OrderedAscending)
         }
         return (comparisonResult == NSComparisonResult.OrderedAscending)
+    }
+    
+    func postponeReminder(uuid: String) {
+        print(uuid)
+    }
+    
+    func dismissReminder(uuid: String) {
+        
     }
 
 

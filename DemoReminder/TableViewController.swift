@@ -55,15 +55,15 @@ class TableViewController: UITableViewController {
         let difference = reminder.date.timeIntervalSinceNow
         if (difference < 60 * 5)
         {
-            cell.contentView.backgroundColor = self.redColor
+            cell.dateView.textColor = self.redColor
         }
         else if (difference < 3600)
         {
-            cell.contentView.backgroundColor = self.yellowColor
+            cell.dateView.textColor = self.yellowColor
         }
         else
         {
-            cell.contentView.backgroundColor = self.greenColor
+            cell.dateView.textColor = self.greenColor
         }
         
         return cell

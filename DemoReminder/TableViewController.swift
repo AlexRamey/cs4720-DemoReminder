@@ -52,11 +52,11 @@ class TableViewController: UITableViewController {
         cell.dateView.text = reminder.getFormattedDateString()
 
         let difference = reminder.date.timeIntervalSinceNow
-        if (difference < 3600*24)
+        if (difference < 60 * 5)
         {
             cell.contentView.backgroundColor = self.redColor
         }
-        else if (difference < 3600 * 24 * 3)
+        else if (difference < 3600)
         {
             cell.contentView.backgroundColor = self.yellowColor
         }
@@ -85,8 +85,21 @@ class TableViewController: UITableViewController {
         
         // Have delete always available as a swipe option
         // Delete the row from the reminder list
-        reminderList.removeAtIndex(indexPath.row)
+        let removedReminder = reminderList.removeAtIndex(indexPath.row)
         tableView.deleteRowsAtIndexPaths([indexPath], withRowAnimation: .Fade)
+        
+        // Cancel the corresponding notification
+        let sharedApp = UIApplication.sharedApplication()
+        for notification in sharedApp.scheduledLocalNotifications! {
+            let notificationUUID = notification.userInfo!["uuid"] as! String
+            if (notificationUUID  == removedReminder.uuid) {
+                sharedApp.cancelLocalNotification(notification)
+            }
+        }
+        
+        //----
+        let count = UIApplication.sharedApplication().scheduledLocalNotifications!.count
+        print("Notifications: \(count)")
     }
 
     /*
@@ -128,6 +141,17 @@ class TableViewController: UITableViewController {
             
             // Check if a row is selected
             if let selectedIndexPath = tableView.indexPathForSelectedRow {
+                
+                // Cancel notification for old reminder
+                let oldReminder = reminderList[selectedIndexPath.row]
+                let sharedApp = UIApplication.sharedApplication()
+                for notification in sharedApp.scheduledLocalNotifications! {
+                    let notificationUUID = notification.userInfo!["uuid"] as! String
+                    if (notificationUUID  == oldReminder.uuid) {
+                        sharedApp.cancelLocalNotification(notification)
+                    }
+                }
+                
                 // Update item at the selected index
                 print("selected index: \(selectedIndexPath.row)")
                 reminderList[selectedIndexPath.row] = reminder
@@ -138,6 +162,10 @@ class TableViewController: UITableViewController {
             // Always re-sort and update the data
             reminderList.sortInPlace(sortByTime)
             tableView.reloadData()
+            
+            //----
+            let count = UIApplication.sharedApplication().scheduledLocalNotifications!.count
+            print("Notifications: \(count)")
         }
     }
     
@@ -150,11 +178,49 @@ class TableViewController: UITableViewController {
     }
     
     func postponeReminder(uuid: String) {
+        // NOTE: Notification activated, so no need to cancel it
+        
+        for reminder in reminderList {
+            // Find reminded with specified UUID
+            if (reminder.uuid == uuid) {
+                // Update current time by 1 hr
+                reminder.date = reminder.date.dateByAddingTimeInterval(60 * 60)
+                
+                // Schedule a new notification
+                let reminderNotification = UILocalNotification()
+                reminderNotification.fireDate = reminder.date
+                reminderNotification.alertTitle = reminder.title
+                reminderNotification.alertBody = reminder.desc
+                let userInfoDict = [
+                    "uuid" : reminder.uuid
+                ]
+                reminderNotification.userInfo = userInfoDict
+                UIApplication.sharedApplication().scheduleLocalNotification(reminderNotification)
+                
+                //----
+                let count = UIApplication.sharedApplication().scheduledLocalNotifications!.count
+                print("Notifications: \(count)")
+                
+                // Always re-sort and update the data
+                reminderList.sortInPlace(sortByTime)
+                tableView.reloadData()
+            }
+        }
         print(uuid)
     }
     
     func dismissReminder(uuid: String) {
+        // NOTE: Notification activated, so no need to cancel it
         
+        // Use a filter to remove the notification from the list
+        reminderList = reminderList.filter() {$0.uuid != uuid}
+        
+        //----
+        let count = UIApplication.sharedApplication().scheduledLocalNotifications!.count
+        print("Notifications: \(count)")
+        
+        // Update the table
+        tableView.reloadData()
     }
 
 

@@ -140,7 +140,10 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             reminderNotification.fireDate = date
             reminderNotification.alertTitle = title
             reminderNotification.alertBody = desc
-            print(reminder!.uuid)
+            let userInfoDict = [
+                "uuid" : reminder!.uuid
+            ]
+            reminderNotification.userInfo = userInfoDict
             UIApplication.sharedApplication().scheduleLocalNotification(reminderNotification)
         }
     }

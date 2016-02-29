@@ -28,13 +28,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         // Create notification actions
         let dismissAction = UIAlertAction(title: "Dismiss", style: .Destructive) { (action) in
-            print(action)
+            let rootViewController = self.window?.rootViewController as! UINavigationController
+            let tableViewController = rootViewController.viewControllers[0] as! TableViewController
+            tableViewController.dismissReminder(notification.userInfo!["uuid"] as! String)
         }
         let postponeAction = UIAlertAction(title: "Postpone", style: .Cancel) { (action) in
-            print(action)
-            //let rootViewController = self.window?.rootViewController as! UINavigationController
-            //let tableViewController = rootViewController.viewControllers[0] as! TableViewController
-            //tableViewController.postponeReminder(notification.valueForKey("uuid") as! String)
+            let rootViewController = self.window?.rootViewController as! UINavigationController
+            let tableViewController = rootViewController.viewControllers[0] as! TableViewController
+            tableViewController.postponeReminder(notification.userInfo!["uuid"] as! String)
         }
         
         // Add actions to AlertController
@@ -61,6 +62,12 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationDidEnterBackground(application: UIApplication) {
         // Use this method to release shared resources, save user data, invalidate timers, and store enough application state information to restore your application to its current state in case it is terminated later.
         // If your application supports background execution, this method is called instead of applicationWillTerminate: when the user quits.
+        
+        // Cancel local notificaitons when the app moves to background
+        // Do this since the app does not persist data, so the notifications must be canceled
+        // ---- TODO Possibly move this to another method
+        UIApplication.sharedApplication().cancelAllLocalNotifications()
+        print(UIApplication.sharedApplication().scheduledLocalNotifications?.count)
     }
 
     func applicationWillEnterForeground(application: UIApplication) {

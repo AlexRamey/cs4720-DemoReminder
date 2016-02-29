@@ -24,8 +24,6 @@ class Reminder: NSObject {
         self.date = date
         
         dateFormatter.dateFormat = "HH:mm MM-dd-yyyy GGG"
-        
-        print(self.uuid)
     }
     
     func getFormattedDateString() -> String {

@@ -128,6 +128,7 @@ class AddViewController: UIViewController, UITextFieldDelegate {
         // Get the new view controller using segue.destinationViewController.
         // Pass the selected object to the new view controller.
         if saveButton === sender {
+            print("save button")
             let title = titleTextField.text ?? ""
             let desc = descriptionTextField.text ?? ""
             let date = datePicker.date
@@ -136,8 +137,18 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             reminder = Reminder(title: title, desc: desc, date: date)
             
             // Schedule local notification
+            
+            // If the date is in the past, set it to 1 second in the future
+            // This solves a bug where the AppDelegate will attempt to show the UIAlertController on the wrong root view
+            //  due to a race condition
+            var fireDate = date
+            let comparisonResult = date.compare(NSDate())
+            if comparisonResult == NSComparisonResult.OrderedAscending {
+                fireDate = NSDate().dateByAddingTimeInterval(1)
+            }
+
             let reminderNotification = UILocalNotification()
-            reminderNotification.fireDate = date
+            reminderNotification.fireDate = fireDate
             reminderNotification.alertTitle = title
             reminderNotification.alertBody = desc
             let userInfoDict = [

@@ -41,11 +41,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Add actions to AlertController
         alertController.addAction(postponeAction)
         alertController.addAction(dismissAction)
-        
+                
         // Get currently showing ViewController
         var currentViewController = self.window?.rootViewController
         
-        // Move up through view cotnrollers to get hte topmost one
+        // Move up through view controllers to get the topmost one
         while let next = currentViewController?.presentedViewController {
             currentViewController = next
         }

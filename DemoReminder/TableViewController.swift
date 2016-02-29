@@ -12,6 +12,7 @@ class TableViewController: UITableViewController {
     
     let cellReuseIdentifier = "ReminderCell"
     var reminderList = [Reminder]()
+    var selectedReminder : Reminder? = nil
     
     // iOS9 colors
     let redColor = UIColor(colorLiteralRed: 250.0/255.0, green: 59.0/255.0, blue: 49.0/255.0, alpha: 1.0)
@@ -129,6 +130,8 @@ class TableViewController: UITableViewController {
             let row = (sender as! NSIndexPath).row
             let reminder = reminderList[row]
             controller.reminder = reminder
+            selectedReminder = reminder
+            print("Editing reminder \(reminder.uuid)")
         } else if segue.identifier == "AddReminder" {
             print("Adding new reminder")
         }
@@ -140,21 +143,29 @@ class TableViewController: UITableViewController {
         if let sourceViewController = sender.sourceViewController as? AddViewController, reminder = sourceViewController.reminder {
             
             // Check if a row is selected
-            if let selectedIndexPath = tableView.indexPathForSelectedRow {
+            if (selectedReminder != nil) {
+                // NOTE: Do NOT use index to update table because items could have been deleted
                 
                 // Cancel notification for old reminder
-                let oldReminder = reminderList[selectedIndexPath.row]
                 let sharedApp = UIApplication.sharedApplication()
                 for notification in sharedApp.scheduledLocalNotifications! {
                     let notificationUUID = notification.userInfo!["uuid"] as! String
-                    if (notificationUUID  == oldReminder.uuid) {
+                    if notificationUUID  == selectedReminder!.uuid {
                         sharedApp.cancelLocalNotification(notification)
+                        break
                     }
                 }
                 
-                // Update item at the selected index
-                print("selected index: \(selectedIndexPath.row)")
-                reminderList[selectedIndexPath.row] = reminder
+                // Update the selected reminder
+                for var index = 0; index < reminderList.count; index++ {
+                    if reminderList[index].uuid == selectedReminder!.uuid {
+                        reminderList[index] = reminder
+                        break
+                    }
+                }
+                
+                // Set selectedReminder to nil
+                selectedReminder = nil
             } else {
                 // Add new item to the list
                 reminderList.append(reminder)
@@ -212,7 +223,7 @@ class TableViewController: UITableViewController {
     func dismissReminder(uuid: String) {
         // NOTE: Notification activated, so no need to cancel it
         
-        // Use a filter to remove the notification from the list
+        // Use a filter to remove the Reminder from the list
         reminderList = reminderList.filter() {$0.uuid != uuid}
         
         //----

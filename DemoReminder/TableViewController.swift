@@ -234,5 +234,24 @@ class TableViewController: UITableViewController {
         tableView.reloadData()
     }
 
+    // Called by the AppDelegate when the app comes into the foreground.
+    // This ensures that the user will be notified for existing reminders that
+    // have yet to occur and are still in memory.
+    // This method does NOT reschedule notifications for reminders whose
+    // due time has passed. Rather, it silently removes them from the list.
+    func rescheduleAllNotifications(){
+        let currentDate = NSDate()
+        var pastReminders:[String] = []
+        for reminder in reminderList{
+            if (reminder.date.compare(currentDate) == .OrderedDescending){
+                reminder.scheduleLocalNotification()
+            }else{
+                pastReminders.append(reminder.uuid)
+            }
+        }
+        // forget about the past reminders and reload tableView if it's around
+        reminderList = reminderList.filter() {!pastReminders.contains($0.uuid)}
+        self.tableView?.reloadData()
+    }
 
 }

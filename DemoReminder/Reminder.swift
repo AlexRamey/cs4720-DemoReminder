@@ -30,4 +30,27 @@ class Reminder: NSObject {
         return dateFormatter.stringFromDate(self.date)
     }
 
+    func scheduleLocalNotification(){
+        // Schedule local notification
+        
+        // If the date is in the past, set it to 1 second in the future
+        // This solves a bug where the AppDelegate will attempt to show the UIAlertController on the wrong root view
+        //  due to a race condition
+        var fireDate = self.date
+        let comparisonResult = self.date.compare(NSDate())
+        if comparisonResult == NSComparisonResult.OrderedAscending {
+            fireDate = NSDate().dateByAddingTimeInterval(1)
+        }
+        
+        let reminderNotification = UILocalNotification()
+        reminderNotification.fireDate = fireDate
+        reminderNotification.alertTitle = self.title
+        reminderNotification.alertBody = self.desc
+        let userInfoDict = [
+            "uuid" : self.uuid
+        ]
+        reminderNotification.userInfo = userInfoDict
+        UIApplication.sharedApplication().scheduleLocalNotification(reminderNotification)
+    }
+    
 }

@@ -136,26 +136,8 @@ class AddViewController: UIViewController, UITextFieldDelegate {
             // Set the Reminder object to be passed to TableViewController after the unwind segue
             reminder = Reminder(title: title, desc: desc, date: date)
             
-            // Schedule local notification
-            
-            // If the date is in the past, set it to 1 second in the future
-            // This solves a bug where the AppDelegate will attempt to show the UIAlertController on the wrong root view
-            //  due to a race condition
-            var fireDate = date
-            let comparisonResult = date.compare(NSDate())
-            if comparisonResult == NSComparisonResult.OrderedAscending {
-                fireDate = NSDate().dateByAddingTimeInterval(1)
-            }
-
-            let reminderNotification = UILocalNotification()
-            reminderNotification.fireDate = fireDate
-            reminderNotification.alertTitle = title
-            reminderNotification.alertBody = desc
-            let userInfoDict = [
-                "uuid" : reminder!.uuid
-            ]
-            reminderNotification.userInfo = userInfoDict
-            UIApplication.sharedApplication().scheduleLocalNotification(reminderNotification)
+            // Schedule the notification
+            reminder!.scheduleLocalNotification()
         }
     }
     

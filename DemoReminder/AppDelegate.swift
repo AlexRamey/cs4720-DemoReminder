@@ -72,6 +72,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func applicationWillEnterForeground(application: UIApplication) {
         // Called as part of the transition from the background to the inactive state; here you can undo many of the changes made on entering the background.
+        if let rootViewController = self.window?.rootViewController as? UINavigationController{
+            if let vc = rootViewController.viewControllers[0] as? TableViewController{
+                vc.rescheduleAllNotifications()
+            }
+        }
     }
 
     func applicationDidBecomeActive(application: UIApplication) {
@@ -81,7 +86,5 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func applicationWillTerminate(application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
-
-
 }
 
